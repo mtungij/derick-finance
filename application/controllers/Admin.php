@@ -9912,7 +9912,7 @@ public function sendsms($phone,$massage){
 	//public function sendsms(){
 	//$phone = '255628323760';
 	//$massage = 'mapenzi yanauwa';
-	$api_key = 'TH6H.AUKa32VwWPfgte5YuYiT5';
+	$api_key = 'jVNBbaRYKJYJaTkcMQ.bmzbBNT';
 	//$api_key = 'qFzd89PXu1e/DuwbwxOE5uUBn6';
 	//$curl = curl_init();
   $ch = curl_init();
