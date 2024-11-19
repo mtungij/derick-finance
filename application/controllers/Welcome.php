@@ -832,7 +832,7 @@ class Welcome extends CI_Controller
 
 		$massage = 'Ndugu Mteja, tunakukumbusha kufanya malipo ya rejesho la mkopo wako la Tsh. ' . number_format($restoration) .
 			' pamoja na madeni yote ya nyuma ikiwa yapo  ' . $comp_name .
-			' kabla ya saa 11:00 jioni leo ili kuepuka adhabu ya kuchelewesha malipo. Tafadhali wasiliana nasi kwa msaada zaidi.';
+			' kabla ya saa 11:00 jioni leo ili kuepuka adhabu ya kuchelewesha malipo';
 
 		$this->sendsms($phone, $massage);
 	}
@@ -857,25 +857,27 @@ class Welcome extends CI_Controller
 
 
 	public function send_reminder_auto_pending($comp_id, $customer_id, $loan_id)
-	{
-		$this->load->model('queries');
-		$data_sms = $this->queries->get_loan_reminder($customer_id);
-		$loan_restoration = $this->queries->get_restoration_loan($loan_id);
-		$compdata = $this->queries->get_companyData($comp_id);
-		$comp_name = $compdata->comp_name;
+{
+    $this->load->model('queries');
+    $data_sms = $this->queries->get_loan_reminder($customer_id);
+    $loan_restoration = $this->queries->get_restoration_loan($loan_id);
+    $compdata = $this->queries->get_companyData($comp_id);
+    $comp_name = $compdata->comp_name;
 
-		$phone = $data_sms->phone_no;
-		$first_name = $data_sms->f_name;
-		$midle_name = $data_sms->m_name;
-		$last_name = $data_sms->l_name;
+    $phone = $data_sms->phone_no;
+    $first_name = $data_sms->f_name;
+    $midle_name = $data_sms->m_name;
+    $last_name = $data_sms->l_name;
 
-		$restoration = $loan_restoration->restration;
-		$massage = 'Ndugu Mteja Rejesho lako la leo Halijapokelewa ' . ' ' . $comp_name . ' ' . 'Epuka Kuchajiwa  Faini Ya Kulaza Rejesho kwa Kutokulipa kwa Wakati Ahsante.';
-		//    echo "<pre>";
-		// print_r($phone);
-		//      exit();
-		$this->sendsms($phone, $massage);
-	}
+    $restoration = $loan_restoration->restration;
+    $massage = 'Ndugu ' . $first_name . ' ' . $midle_name . ' ' . $last_name . ', Rejesho lako halijapokelewa. Hakikisha unalipa pamoja na madeni yote ya nyuma na rejesho lijalo kuepuka faini au kukosa sifa ya kukopeshwa tena. ' . $comp_name;
+
+    // echo "<pre>";
+    // print_r($phone);
+    // exit();
+    $this->sendsms($phone, $massage);
+}
+
 
 
 	public function sendsms($phone, $massage)
