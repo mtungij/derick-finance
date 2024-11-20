@@ -5436,7 +5436,7 @@ class Oficer extends CI_Controller
 
       if ($from_balance_ < $total_makato) {
         //echo "hapana ndogo";
-        $this->session->set_flashdata("error", 'Account balance Is Not Enough');
+        $this->session->set_flashdata("error", 'Salio la Account la Tawi halitoshi kutoa mkopo ');
       } else {
         //  echo "hapo sawa";
         // exit();
@@ -5488,14 +5488,15 @@ class Oficer extends CI_Controller
     $phones = $loan_code->phone_no;
     $comp_id = $loan_code->comp_id;
 
-    $sms = 'Namba ya Siri Ya Mkopo Wako ni ' . $code;
+   
+    $sms = 'Namba ya msimbo wa mkopo wako ulioomba ni: ' . $code . '. Taarifa zako za simu zitahifadhiwa kwa usalama kama sehemu ya mchakato wa uthibitisho.';
     $massage = $sms;
     $phone = '0' . substr($phones, 3, 10);
     // print_r($massage);
     //      exit();
 
     $this->sendsms($phone, $massage);
-    $this->session->set_flashdata('massage', 'Loan code sent please Wait');
+    $this->session->set_flashdata('massage', 'code imefanikiwa kutumwa kikamilifu');
     return redirect('oficer/data_with_depost/' . $customer_id);
   }
 
