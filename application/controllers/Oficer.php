@@ -3,70 +3,40 @@ defined('BASEPATH') or exit('No direct script access allowed');
 class Oficer extends CI_Controller
 {
   public function index()
-  {
-    $this->load->model('queries');
+	{
+	$this->load->model('queries');
     $blanch_id = $this->session->userdata('blanch_id');
     $empl_id = $this->session->userdata('empl_id');
     $manager_data = $this->queries->get_manager_data($empl_id);
     $comp_id = $manager_data->comp_id;
     $blanch_id = $manager_data->blanch_id;
-    $blanchCostomer = $this->queries->get_active_todayblanch_customer($blanch_id);
-    $wadeni = $this->queries->get_wadeni_sugu($blanch_id);
-    $activecustomer = $this->queries->get_active_todayblanch_customer($blanch_id);
-    $out_customer_count = $this->queries->getOutCustomersCountByBlanchId($blanch_id);
-    $pendingtoday = $this->queries->get_pending_customer($blanch_id);
-    $hai_wateja = $this->queries->get_depositing_hai_blanch($blanch_id);
-    $today_default = $this->queries->get_depositing_out_total_blanch($blanch_id);
-    $defaulttotal = $this->queries->get_total_branch_default($blanch_id);
-    $defaulttotalpay = $this->queries->get_customer_default_pay($blanch_id);
-    $donetoday = $this->queries->get_done_customers_count($blanch_id);
-    $todaydeposit = $this->queries->get_total_deposits($blanch_id);
-    $denijumla = $this->queries->get_total_deni($blanch_id);
-    $haijumla = $this->queries->get_total_hai($blanch_id);
-    $jumlahai = $this->queries->get_hai_jumla($blanch_id);
-    $denisugu = $this->queries->get_mauzo_out_jumla($blanch_id);
-    $todayclose = $this->queries->get_total_deposit_for_closed_customers($blanch_id);
-    $rejeshoclose = $this->queries->get_closed_rejesho_today($blanch_id);
-    $rejesho = $this->queries->get_open_rejesho_today($blanch_id);
-    $double = $this->queries->get_overpaid_amounts($blanch_id);
-    $today_mauzo = $this->queries->get_total_recevabletawi($blanch_id);
-    $total_faini = $this->queries->get_sum_incomeBlanchData($blanch_id);
+    
+    $loan_pending = $this->queries->get_totalPendingBlanch($blanch_id);
+    $total_disbursed = $this->queries->get_SumDisbarsedLoanBlanch($blanch_id);
+    $total_withdrawal =$this->queries->get_total_withdrawal_today_blanch($blanch_id);
+    $total_disbrse = $this->queries->get_sum_loanDisbursed_blanch($blanch_id);
+    $total_loanwithdraw = $this->queries->get_loan_withdrawal_today_blanch($blanch_id);
+    $pending_total = $this->queries->LoanPendingBlanchSum($blanch_id);
+    $leojumla = $this->queries->get_depositing_hai_blanch($blanch_id);
+    $total_active = $this->queries->get_total_today_deposit($blanch_id);
+    $deposit_out = $this->queries->get_total_deposit_out($blanch_id);
+    $total_deducted = $this->queries->get_today_deducted_feeblanch($blanch_id);
+    $total_receved = $this->queries->get_sum_incomeBlanchData($blanch_id);
+    $total_pending = $this->queries->get_total_pend_loan($blanch_id);
+   $defaulter =$this->queries->getOutstandingLoans($blanch_id);
+   
+    $sugu_wateja = $this->queries->get_depositing_sugu_blanch($blanch_id);
+   
+    // echo "<pre>";
+    //        print_r( $defaulter);
+    //              exit();
 
-    //  var_dump( $total_faini);
-
-    //   exit();
-
-
-    $data = [
-      'activecustomer' => $activecustomer,
-      'defaulttotal' => $defaulttotal,
-      'defaulttotalpay' => $defaulttotalpay,
-      'manager_data' => $manager_data,
-      'blanchCostomer' => $blanchCostomer,
-      'wadeni' => $wadeni,
-      'hai_wateja' => $hai_wateja,
-      'today_default' => $today_default,
-      'donetoday' => $donetoday,
-      'out_customer_count' => $out_customer_count,
-      'pendingtoday' => $pendingtoday,
-      'today_mauzo' => $today_mauzo,
-      'total_faini' => $total_faini,
-
-      'todaydeposit' => $todaydeposit,
-      'denijumla' => $denijumla,
-      'haijumla' => $haijumla,
-      'jumlahai' => $jumlahai,
-      'denisugu' => $denisugu,
-      'todayclose' => $todayclose,
-      'rejeshoclose' => $rejeshoclose
-    ];
-
-
-
-    $this->load->view('oficer/index', $data);
-
-
-  }
+	$this->load->view('oficer/index',['manager_data'=>$manager_data , 'loan_pending' => $loan_pending, 'total_disbursed' => $total_disbursed,
+'total_withdrawal' => $total_withdrawal, 'total_disbrse' => $total_disbrse,'total_loanwithdraw' =>  $total_loanwithdraw, 'pending_total' => $pending_total,
+'leojumla' => $leojumla, 'total_active' => $total_active , 'deposit_out'=> $deposit_out,'total_deducted'=>$total_deducted,
+'total_receved' => $total_receved, 'total_pending' => $total_pending
+]);
+	}
 
 
   public function setting()
