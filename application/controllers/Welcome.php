@@ -394,138 +394,138 @@ class Welcome extends CI_Controller
 			//  $penart_value_data = @$penart_value_general->penart_value;
 			//  }
 
-			$today = date("Y-m-d 23:59");
-			//$today = date("2023-02-16 23:59");
-			@$loans = $this->queries->get_sum_depostLoan($loan_id);
-			$depost_data = @$loans->depos;
-			$rem = $totalloan - $depost_data;
-			// print_r($depost_data);
-			//  exit();
-			//loan penart by samwel
-			$penart_data = $loan_data->penat_status;
-			$penart_status = $penart_data;
-			$action_penart = $loan_data->action_penart;
-			$action = $action_penart;
-			$penart_value = $loan_data->penart;
-			$money_value = $penart_value;
-			$restoration_loan = $loan_data->restration;
-			$lejesho = $restoration_loan;
+	//   $today = date("Y-m-d 23:59");
+	$today = date("Y-m-d", strtotime("+1 day"));
+	//   $today = date("Y-m-d");
+	  @$loans = $this->queries->get_sum_depostLoan($loan_id);
+	  $depost_data = @$loans->depos;
+	  $rem = $totalloan - $depost_data;
+		//   print_r($depost_data);
+		//    exit();
+	  //loan penart by samwel
+	   $penart_data = $loan_data->penat_status;
+	   $penart_status = $penart_data;
+	   $action_penart = $loan_data->action_penart;
+	   $action = $action_penart;
+	   $penart_value = $loan_data->penart;
+	   $money_value = $penart_value;
+	   $restoration_loan = $loan_data->restration;
+	   $lejesho = $restoration_loan;
+	 
+	   //asilimia lejesho
+	   $percent_calc = $money_value / 100 * $lejesho;
+	  
+	 if ($old_balance_data >= $loanreturn) {
+		   $sua = 0;
+	  
+	   }elseif($old_balance_data == 0){
+			   $sua = 0;
+	   }elseif($loanreturn >= $old_balance_data) {
+		   $sua = $loanreturn - $old_balance_data;
+	  }
+	   
+	   if ($renew_loan == FALSE) {
+	  $instalment = $day * 1;
+	   }else{
+	  $instalment = $day * $renew_loan;
+	  }
 
-			//asilimia lejesho
-			$percent_calc = $money_value / 100 * $lejesho;
+	 @$loan_balance_check = $this->queries->get_Desc_balance($loan_id);
+	 $pay_balance_check = @$loan_balance_check->balance;
+	 $reamain_kulipwa = $lejesho - $pay_balance_check;
 
-			if ($old_balance_data >= $loanreturn) {
-				$sua = 0;
+	  @$deni_ckeck = $this->queries->check_loan_pending($loan_id);
+	  $total_pend = @$deni_ckeck->total_pend;
+	  $deni_baki = $total_pend + $reamain_kulipwa;
 
-			} elseif ($old_balance_data == 0) {
-				$sua = 0;
-			} elseif ($loanreturn >= $old_balance_data) {
-				$sua = $loanreturn - $old_balance_data;
-			}
-
-			if ($renew_loan == FALSE) {
-				$instalment = $day * 1;
-			} else {
-				$instalment = $day * $renew_loan;
-			}
-
-			@$loan_balance_check = $this->queries->get_Desc_balance($loan_id);
-			$pay_balance_check = @$loan_balance_check->balance;
-			$reamain_kulipwa = $lejesho - $pay_balance_check;
-
-			@$deni_ckeck = $this->queries->check_loan_pending($loan_id);
-			$total_pend = @$deni_ckeck->total_pend;
-			$deni_baki = $total_pend + $reamain_kulipwa;
-
-			if ($loan_end_date <= $today and $loan_status == 'withdrawal') {
-				$this->insert_outStandLoan($comp_id, $blanch_id, $loan_id, $group_id, $customer_id, $rem, $group_id);
+		   if($loan_end_date <= $today and $loan_status == 'withdrawal'){
+			$this->insert_outStandLoan($comp_id,$blanch_id,$loan_id,$group_id,$customer_id,$rem,$group_id);
 				$this->update_loastatus_outstand($loan_id);
 				$this->update_customer_status_out($customer_id);
 				$this->update_recovery($loan_id);
-			} elseif ($depost_data >= $totalloan) {
-				$this->update_loastatus($loan_id);
-				$this->insert_loan_kumaliza($comp_id, $blanch_id, $customer_id, $loan_id, $kumaliza, $group_id);
-				//$this->update_shedure_paid($loan_id);
-				$this->update_customer_status($customer_id);
-				//echo"tayali";
-			} elseif ($return_date == NULL) {
-				//echo "bado sana";
-			} elseif ($return_date <= $today) {
-				if ($old_balance_data < $loanreturn and $penart_status == 'YES' and $action == 'MONEY VALUE') {
-					//insert penart money value
-					//echo "penati ya hela";
-					$this->insert_loanPenart_moneyValue($comp_id, $blanch_id, $customer_id, $loan_id, $money_value, $group_id);
-					$this->witdrow_balanceAutoYote($loan_id, $comp_id, $blanch_id, $customer_id, $old_balance_data, $chukua_chote, $description, $group_id);
-					// insert pending loan
-					$this->insert_pending_data($comp_id, $blanch_id, $customer_id, $loan_id, $totalloan, $day, $loanreturn, $old_balance_data, $group_id);
-					if ($total_pend == TRUE || $total_pend == '0') {
-						$this->update_pending_total($loan_id, $deni_baki);
-					} elseif ($total_pend == FALSE) {
-						$this->insert_pending_total($comp_id, $customer_id, $blanch_id, $loan_id, $reamain_kulipwa);
-					}
-					//insert customer report money value
-					$this->insert_loan_pending_report($comp_id, $blanch_id, $customer_id, $loan_id, $loanreturn, $sua, $money_value, $group_id);
-					//$this->update_shedure_notpaid($loan_id);
-					//echo "anadaiwa";
-				} elseif ($old_balance_data < $loanreturn and $penart_status == 'YES' and $action == 'PERCENTAGE VALUE') {
-					//	echo "penati ya asilimia";
-					//insert loanpenart percentage value
-					$this->insert_loanPenart_percentage_Value($comp_id, $blanch_id, $customer_id, $loan_id, $percent_calc, $group_id);
-					$this->witdrow_balanceAutoYote($loan_id, $comp_id, $blanch_id, $customer_id, $old_balance_data, $chukua_chote, $description, $group_id);
+			  }elseif($depost_data === $totalloan){
+			  $this->update_loastatus($loan_id);
+			  $this->insert_loan_kumaliza($comp_id,$blanch_id,$customer_id,$loan_id,$kumaliza,$group_id);
+			  //$this->update_shedure_paid($loan_id);
+			  $this->update_customer_status($customer_id);
+					 //echo"tayali";
+				 }elseif($return_date == NULL){
+					 //echo "bado sana";
+			  }elseif($return_date <= $today){
+			  if($old_balance_data < $loanreturn and $penart_status == 'YES' and $action == 'MONEY VALUE'){ 
+				  //insert penart money value
+				  //echo "penati ya hela";
+			 $this->insert_loanPenart_moneyValue($comp_id,$blanch_id,$customer_id,$loan_id,$money_value,$group_id);
+			 $this->witdrow_balanceAutoYote($loan_id,$comp_id,$blanch_id,$customer_id,$old_balance_data,$chukua_chote,$description,$group_id);
+				 // insert pending loan
+			 $this->insert_pending_data($comp_id,$blanch_id,$customer_id,$loan_id,$totalloan,$day,$loanreturn,$old_balance_data,$group_id);
+			 if ($total_pend == TRUE || $total_pend == '0') {
+			 $this->update_pending_total($loan_id,$deni_baki);
+			 }elseif ($total_pend == FALSE) {
+			 $this->insert_pending_total($comp_id,$customer_id,$blanch_id,$loan_id,$reamain_kulipwa);	
+			 }
+			 //insert customer report money value
+			 $this->insert_loan_pending_report($comp_id,$blanch_id,$customer_id,$loan_id,$loanreturn,$sua,$money_value,$group_id);
+			 //$this->update_shedure_notpaid($loan_id);
+				 //echo "anadaiwa";
+			 }elseif($old_balance_data < $loanreturn and $penart_status == 'YES' and $action == 'PERCENTAGE VALUE'){
+			 //	echo "penati ya asilimia";
+				 //insert loanpenart percentage value
+			 $this->insert_loanPenart_percentage_Value($comp_id,$blanch_id,$customer_id,$loan_id,$percent_calc,$group_id);
+			 $this->witdrow_balanceAutoYote($loan_id,$comp_id,$blanch_id,$customer_id,$old_balance_data,$chukua_chote,$description,$group_id);
 					//insert pending loan
-					$this->insert_pending_data($comp_id, $blanch_id, $customer_id, $loan_id, $totalloan, $day, $loanreturn, $old_balance_data, $group_id);
-					if ($total_pend == TRUE || $total_pend == '0') {
-						$this->update_pending_total($loan_id, $deni_baki);
-					} elseif ($total_pend == FALSE) {
-						$this->insert_pending_total($comp_id, $customer_id, $blanch_id, $loan_id, $reamain_kulipwa);
-					}
+			 $this->insert_pending_data($comp_id,$blanch_id,$customer_id,$loan_id,$totalloan,$day,$loanreturn,$old_balance_data,$group_id);
+			 if ($total_pend == TRUE || $total_pend == '0') {
+			 $this->update_pending_total($loan_id,$deni_baki);
+			 }elseif ($total_pend == FALSE) {
+			 $this->insert_pending_total($comp_id,$customer_id,$blanch_id,$loan_id,$reamain_kulipwa);	
+			 }
 					//update return date
-					//insert customer report percentage value
-					$this->insert_loan_pending_reportPercentage_value($comp_id, $blanch_id, $customer_id, $loan_id, $loanreturn, $sua, $percent_calc, $group_id);
-					//$this->update_shedure_notpaid($loan_id);
-				} elseif ($old_balance_data < $loanreturn and $penart_status == 'NO') {
-					//echo "hakuna penart";
-					//insert loan penart
-					$this->insert_pending_data($comp_id, $blanch_id, $customer_id, $loan_id, $totalloan, $day, $loanreturn, $old_balance_data, $group_id);
-					//insert customer report no penart 
-					$this->insert_loan_penart_free($comp_id, $blanch_id, $customer_id, $loan_id, $loanreturn, $sua, $group_id);
-					$this->witdrow_balanceAutoYote($loan_id, $comp_id, $blanch_id, $customer_id, $old_balance_data, $chukua_chote, $description, $group_id);
-					if ($total_pend == TRUE || $total_pend == '0') {
-						$this->update_pending_total($loan_id, $deni_baki);
-					} elseif ($total_pend == FALSE) {
-						$this->insert_pending_total($comp_id, $customer_id, $blanch_id, $loan_id, $reamain_kulipwa);
-					}
-					//$this->update_shedure_notpaid($loan_id);
-
-				}
-				if ($old_balance_data >= $loanreturn) {
-					//echo "makato yanaendelea";
-					$this->witdrow_balanceAuto($loan_id, $comp_id, $blanch_id, $customer_id, $loanreturn, $remain, $description, $group_id);
-					$this->insert_loan_penartPaid($comp_id, $blanch_id, $customer_id, $loan_id, $loanreturn, $group_id);
-					//$this->update_shedure_paid($loan_id); 
-				}
-				//ilinitesa sana hii update return time
-				$this->update_returntime($loan_id, $instalment, $dis_date);
+				//insert customer report percentage value
+			 $this->insert_loan_pending_reportPercentage_value($comp_id,$blanch_id,$customer_id,$loan_id,$loanreturn,$sua,$percent_calc,$group_id);
+			 //$this->update_shedure_notpaid($loan_id);
+			 }elseif($old_balance_data < $loanreturn and $penart_status == 'NO'){
+				  //echo "hakuna penart";
+				  //insert loan penart
+			 $this->insert_pending_data($comp_id,$blanch_id,$customer_id,$loan_id,$totalloan,$day,$loanreturn,$old_balance_data,$group_id);
+			  //insert customer report no penart 
+			 $this->insert_loan_penart_free($comp_id,$blanch_id,$customer_id,$loan_id,$loanreturn,$sua,$group_id);
+			 $this->witdrow_balanceAutoYote($loan_id,$comp_id,$blanch_id,$customer_id,$old_balance_data,$chukua_chote,$description,$group_id);
+			 if ($total_pend == TRUE || $total_pend == '0') {
+			 $this->update_pending_total($loan_id,$deni_baki);
+			 }elseif ($total_pend == FALSE) {
+			 $this->insert_pending_total($comp_id,$customer_id,$blanch_id,$loan_id,$reamain_kulipwa);	
+			 }
+			 //$this->update_shedure_notpaid($loan_id);
+			 
+			 }if($old_balance_data >= $loanreturn){
+				   //echo "makato yanaendelea";
+			  $this->witdrow_balanceAuto($loan_id,$comp_id,$blanch_id,$customer_id,$loanreturn,$remain,$description,$group_id);
+			  $this->insert_loan_penartPaid($comp_id,$blanch_id,$customer_id,$loan_id,$loanreturn,$group_id); 
+			  //$this->update_shedure_paid($loan_id); 
+			  }
+			  //ilinitesa sana hii update return time
+			  $this->update_returntime($loan_id,$instalment,$dis_date);
+			  }
 			}
-		}
-	}
+		   }
 
-	// elseif($old_balance_data < $loanreturn){
-	// {
-	//    }
+		   // elseif($old_balance_data < $loanreturn){
+		   // {
+		   //    }
 
 	//update return date
-	public function update_returntime($loan_id, $instalment, $dis_date)
-	{
-		$now = date("Y-m-d H:i");
-		$someDate = DateTime::createFromFormat("Y-m-d H:i", $now);
-		$someDate->add(new DateInterval('P' . $instalment . 'D'));
-		$return_data = $someDate->format("Y-m-d 23:59");
-		$rtn = $someDate->format("Y-m-d");
-		$sqldata = "UPDATE `tbl_loans` SET `dis_date`='$now',`return_date`= '$return_data',`date_show`='$rtn',`dep_status`='open' WHERE `loan_id`= '$loan_id'";
-		$query = $this->db->query($sqldata);
-		return true;
-	}
+public function update_returntime($loan_id,$instalment,$dis_date){
+$now = date("Y-m-d H:i");
+$someDate = DateTime::createFromFormat("Y-m-d H:i",$now);
+$someDate->add(new DateInterval('P'.$instalment.'D'));
+$return_data = $someDate->format("Y-m-d 23:59");
+$rtn = $someDate->format("Y-m-d");
+$sqldata="UPDATE `tbl_loans` SET `dis_date`='$now',`return_date`= '$return_data',`date_show`='$rtn',`dep_status`='open' WHERE `loan_id`= '$loan_id'";
+$query = $this->db->query($sqldata);
+return true;
+}
+
 
 
 

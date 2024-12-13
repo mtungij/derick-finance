@@ -12,6 +12,8 @@
 
 <link rel="icon" href="favicon.ico" type="image/x-icon">
 <!-- VENDOR CSS -->
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
 <link rel="stylesheet" href="<?php echo base_url(); ?>assets/vendor/bootstrap/css/bootstrap.min.css">
 <link rel="stylesheet" href="<?php echo base_url(); ?>assets/vendor/font-awesome/css/font-awesome.min.css">
 
@@ -46,6 +48,10 @@
      border-radius: 10px !important; 
 
 }
+
+body {
+            font-family: 'Poppins', sans-serif;
+        }
 </style>
 
 
